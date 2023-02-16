@@ -65,6 +65,11 @@ fun org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension.native(
 	}.apply(configure)
 }
 
+rootProject.plugins.withType<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin> {
+	rootProject.the<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension>().download = false
+}
+
+
 kotlin {
 	jvm {
 		compilations.all {
@@ -78,6 +83,13 @@ kotlin {
 			//environment("LIBRARY", "/usr/local/lib64/libvosk/libvosk.so")
 			environment("AUDIO", "$projectDir/../python/example/test.wav")
 		}
+	}
+
+	js(IR) {
+		browser {
+		}
+		binaries.library()
+		useCommonJs()
 	}
 
 	android {
@@ -161,6 +173,20 @@ kotlin {
 		val androidTest by getting {
 			dependencies {
 				implementation("junit:junit:4.13.2")
+			}
+		}
+		val jsMain by getting {
+			dependencies {
+				implementation(npm("async", "^3.2.0"))
+				implementation(npm("ffi-napi", "^4.0.3"))
+				implementation(npm("mic", "^2.1.2"))
+				implementation(npm("ref-napi", ">=2.0.0"))
+				implementation(npm("wav", "^1.0.2"))
+			}
+		}
+		val jsTest by getting {
+			dependencies {
+				implementation(kotlin("test-js"))
 			}
 		}
 	}
